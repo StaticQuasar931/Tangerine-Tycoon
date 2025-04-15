@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Play Tangerine Tycoon - Unblocked Flash Clicker Game | StaticQuasar931</title>
+
+  <meta name="description" content="Play Tangerine Tycoon – a chaotic and addictive clicker game about hoarding citrus. Breed, invest, and time-travel with tangerines! Fully unblocked and Flash-ready at StaticQuasar931." />
+  <meta name="keywords" content="Tangerine Tycoon, play Tangerine Tycoon online, Tangerine Tycoon unblocked, citrus clicker, tangerine stock market game, tangerine game flash, clicker game unbl0cked, Flash idle game, time travel citrus, weird idle games, tangerine idle tycoon, staticquasar931 tycoon, static931 clicker flash, retro flash games unblocked, tangerine breeding, ruffle clicker g@mes" />
+  <meta name="author" content="StaticQuasar931" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://staticquasar931.github.io/Tangerine-Tycoon/" />
+  <link rel="icon" href="tangerine-tycoon.png" type="image/png" />
+  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #000;
+      overflow: hidden;
+    }
+
+    #game-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #000;
+    }
+
+    #player {
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+    }
+
+    #staticMenu {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: #222;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+      font-size: 14px;
+      z-index: 1000;
+      animation: sparkle 2s infinite;
+    }
+
+    #staticMenu a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+
+    #staticMenu:hover {
+      background: #333;
+    }
+
+    @keyframes sparkle {
+      0%, 100% { box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+      50% { box-shadow: 0 0 16px rgba(0,255,255,0.5); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Static Navigation Menu -->
+  <div id="staticMenu">
+    <a href="https://sites.google.com/view/staticquasar931/gm3z" target="_blank">More Unblocked Games by Static</a>
+  </div>
+
+  <!-- Game Embed -->
+  <div id="game-container">
+    <div id="player"></div>
+  </div>
+
+  <!-- Ruffle Flash Embed -->
+  <script>
+    window.RufflePlayer = window.RufflePlayer || {};
+    window.addEventListener("DOMContentLoaded", () => {
+      const ruffle = window.RufflePlayer.newest();
+      const player = ruffle.createPlayer();
+      player.style.width = "100%";
+      player.style.height = "100%";
+      player.style.backgroundColor = "#000";
+      document.getElementById("player").appendChild(player);
+      player.load("tangerine-tycoon.swf");
+    });
+  </script>
+</body>
+</html>
