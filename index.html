@@ -22,18 +22,33 @@
     }
 
     #game-wrapper {
+      position: relative;
       width: 100vw;
       height: 100vh;
-      overflow: hidden;
-      position: relative;
       background: #000;
     }
 
     #player {
       width: 100%;
       height: 100%;
-      transform-origin: center center;
-      transition: transform 0.3s ease;
+      background-color: #000;
+    }
+
+    .grayOverlay {
+      position: fixed;
+      top: 0;
+      height: 100vh;
+      background-color: #222;
+      z-index: 900;
+      display: none;
+    }
+
+    #leftOverlay {
+      left: 0;
+    }
+
+    #rightOverlay {
+      right: 0;
     }
 
     #staticMenu {
@@ -79,44 +94,54 @@
 </head>
 <body>
 
-  <!-- Static Menu -->
+  <!-- StaticQuasar931 Navigation -->
   <div id="staticMenu">
     <a href="https://sites.google.com/view/staticquasar931/gm3z" target="_blank">More Unblocked Games by Static</a>
   </div>
 
-  <!-- Crop Toggle -->
+  <!-- Hide Ugly Mode Button -->
   <button id="toggleCrop">Hide Ugly Mode</button>
 
-  <!-- Game Container -->
+  <!-- Left and Right Gray Overlays -->
+  <div id="leftOverlay" class="grayOverlay"></div>
+  <div id="rightOverlay" class="grayOverlay"></div>
+
+  <!-- Game Embed -->
   <div id="game-wrapper">
     <div id="player"></div>
   </div>
 
-  <!-- Ruffle Embed + Cropping Toggle -->
   <script>
     window.RufflePlayer = window.RufflePlayer || {};
-    let cropped = false;
-
     window.addEventListener("DOMContentLoaded", () => {
       const ruffle = window.RufflePlayer.newest();
       const player = ruffle.createPlayer();
       const playerContainer = document.getElementById("player");
-      const toggleBtn = document.getElementById("toggleCrop");
-
       player.style.width = "100%";
       player.style.height = "100%";
       player.style.backgroundColor = "#000";
       playerContainer.appendChild(player);
       player.load("tangerine-tycoon.swf");
 
+      // Crop logic
+      let cropped = false;
+      const grayWidth = 160; // <--- EDIT this number to change how much gets covered
+      const leftOverlay = document.getElementById("leftOverlay");
+      const rightOverlay = document.getElementById("rightOverlay");
+      const toggleBtn = document.getElementById("toggleCrop");
+
+      // Set overlay widths
+      leftOverlay.style.width = rightOverlay.style.width = grayWidth + "px";
+
       toggleBtn.onclick = () => {
         cropped = !cropped;
         if (cropped) {
-          // Zoom in (crop out left/right)
-          player.style.transform = "scale(1.45)";
+          leftOverlay.style.display = "block";
+          rightOverlay.style.display = "block";
           toggleBtn.textContent = "Show Full View";
         } else {
-          player.style.transform = "scale(1)";
+          leftOverlay.style.display = "none";
+          rightOverlay.style.display = "none";
           toggleBtn.textContent = "Hide Ugly Mode";
         }
       };
