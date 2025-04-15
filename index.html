@@ -6,10 +6,9 @@
   <title>Play Tangerine Tycoon - Unblocked Flash Clicker Game | StaticQuasar931</title>
 
   <meta name="description" content="Play Tangerine Tycoon – a chaotic and addictive clicker game about hoarding citrus. Breed, invest, and time-travel with tangerines! Fully unblocked and Flash-ready at StaticQuasar931." />
-  <meta name="keywords" content="Tangerine Tycoon, play Tangerine Tycoon online, Tangerine Tycoon unblocked, citrus clicker, tangerine stock market game, tangerine game flash, clicker game unbl0cked, Flash idle game, time travel citrus, weird idle games, tangerine idle tycoon, staticquasar931 tycoon, static931 clicker flash, retro flash games unblocked, tangerine breeding, ruffle clicker g@mes" />
+  <meta name="keywords" content="Tangerine Tycoon, Tangerine Tycoon unblocked, citrus clicker, Flash idle game, Ruffle unblocked g@mes, staticquasar931 tycoon, tangerine flash game" />
   <meta name="author" content="StaticQuasar931" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://staticquasar931.github.io/Tangerine-Tycoon/" />
   <link rel="icon" href="tangerine-tycoon.png" type="image/png" />
   <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
@@ -17,128 +16,109 @@
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      width: 100%;
       background-color: #000;
+      height: 100%;
       overflow: hidden;
     }
 
-    #game-container {
+    #game-wrapper {
       width: 100vw;
       height: 100vh;
-      background-color: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      overflow: hidden;
+      position: relative;
+      background: #000;
     }
 
     #player {
       width: 100%;
       height: 100%;
-      background-color: #000;
+      transform-origin: center center;
+      transition: transform 0.3s ease;
     }
 
     #staticMenu {
       position: fixed;
       top: 10px;
       left: 10px;
-      background: #222;
-      color: #fff;
-      padding: 8px 14px;
-      border-radius: 12px;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+      background: #111;
+      color: #0ff;
+      padding: 10px 16px;
+      border-radius: 10px;
       font-size: 14px;
+      font-family: Arial, sans-serif;
       z-index: 1000;
-      animation: sparkle 2s infinite;
+      animation: glow 2s infinite alternate;
     }
 
     #staticMenu a {
-      color: #00ffff;
+      color: #0ff;
       text-decoration: none;
+      font-weight: bold;
     }
 
-    #staticMenu:hover {
-      background: #333;
-    }
-
-    #grayModeToggle {
+    #toggleCrop {
       position: fixed;
       top: 10px;
       right: 10px;
       background: #333;
       color: #fff;
+      padding: 10px 16px;
+      font-size: 14px;
       border: none;
-      padding: 8px 14px;
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      border-radius: 12px;
-      z-index: 1000;
+      border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 0 10px #888;
-      transition: background 0.3s;
+      z-index: 1000;
+      box-shadow: 0 0 10px #666;
     }
 
-    #grayModeToggle:hover {
-      background: #444;
-    }
-
-    @keyframes sparkle {
-      0%, 100% { box-shadow: 0 0 10px rgba(255,255,255,0.2); }
-      50% { box-shadow: 0 0 16px rgba(0,255,255,0.5); }
+    @keyframes glow {
+      0% { opacity: 0.7; }
+      100% { opacity: 1; box-shadow: 0 0 10px #0ff; }
     }
   </style>
 </head>
-
 <body>
-  <!-- Static Navigation Menu -->
+
+  <!-- Static Menu -->
   <div id="staticMenu">
     <a href="https://sites.google.com/view/staticquasar931/gm3z" target="_blank">More Unblocked Games by Static</a>
   </div>
 
-  <!-- Toggle Gray Mode Button -->
-  <button id="grayModeToggle">Hide Ugly Mode</button>
+  <!-- Crop Toggle -->
+  <button id="toggleCrop">Hide Ugly Mode</button>
 
-  <!-- Game Embed -->
-  <div id="game-container">
+  <!-- Game Container -->
+  <div id="game-wrapper">
     <div id="player"></div>
   </div>
 
-  <!-- Ruffle Embed + DOM Sidebar Editing Script -->
+  <!-- Ruffle Embed + Cropping Toggle -->
   <script>
     window.RufflePlayer = window.RufflePlayer || {};
+    let cropped = false;
+
     window.addEventListener("DOMContentLoaded", () => {
       const ruffle = window.RufflePlayer.newest();
       const player = ruffle.createPlayer();
+      const playerContainer = document.getElementById("player");
+      const toggleBtn = document.getElementById("toggleCrop");
+
       player.style.width = "100%";
       player.style.height = "100%";
       player.style.backgroundColor = "#000";
-      document.getElementById("player").appendChild(player);
+      playerContainer.appendChild(player);
       player.load("tangerine-tycoon.swf");
 
-      // Toggle ugly blue sidebars
-      let gray = false;
-      const toggleBtn = document.getElementById('grayModeToggle');
-
       toggleBtn.onclick = () => {
-        const iframe = document.querySelector("ruffle-embed, ruffle-player, iframe");
-        if (!iframe) return;
-
-        const gameDoc = iframe.shadowRoot || iframe.contentDocument;
-        if (!gameDoc) return;
-
-        const tryToggle = () => {
-          const blueEls = gameDoc.querySelectorAll("*");
-          blueEls.forEach(el => {
-            const bg = getComputedStyle(el).backgroundColor;
-            if (bg && (bg.includes("rgb(0, 76, 153)") || bg.includes("rgb(51, 102, 153)") || bg.includes("blue"))) {
-              el.style.backgroundColor = gray ? "#336699" : "#444";
-            }
-          });
-        };
-
-        gray = !gray;
-        toggleBtn.textContent = gray ? "Show Blue Again" : "Hide Ugly Mode";
-        tryToggle();
+        cropped = !cropped;
+        if (cropped) {
+          // Zoom in (crop out left/right)
+          player.style.transform = "scale(1.45)";
+          toggleBtn.textContent = "Show Full View";
+        } else {
+          player.style.transform = "scale(1)";
+          toggleBtn.textContent = "Hide Ugly Mode";
+        }
       };
     });
   </script>
