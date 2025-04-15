@@ -26,10 +26,10 @@
     #game-container {
       width: 100vw;
       height: 100vh;
+      background-color: #000;
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #000;
     }
 
     #player {
@@ -61,6 +61,27 @@
       background: #333;
     }
 
+    #grayModeToggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      border-radius: 12px;
+      z-index: 1000;
+      cursor: pointer;
+      box-shadow: 0 0 10px #888;
+      transition: background 0.3s;
+    }
+
+    #grayModeToggle:hover {
+      background: #444;
+    }
+
     @keyframes sparkle {
       0%, 100% { box-shadow: 0 0 10px rgba(255,255,255,0.2); }
       50% { box-shadow: 0 0 16px rgba(0,255,255,0.5); }
@@ -74,12 +95,15 @@
     <a href="https://sites.google.com/view/staticquasar931/gm3z" target="_blank">More Unblocked Games by Static</a>
   </div>
 
+  <!-- Toggle Gray Mode Button -->
+  <button id="grayModeToggle">Hide Ugly Mode</button>
+
   <!-- Game Embed -->
   <div id="game-container">
     <div id="player"></div>
   </div>
 
-  <!-- Ruffle Flash Embed -->
+  <!-- Ruffle Embed + DOM Sidebar Editing Script -->
   <script>
     window.RufflePlayer = window.RufflePlayer || {};
     window.addEventListener("DOMContentLoaded", () => {
@@ -90,6 +114,32 @@
       player.style.backgroundColor = "#000";
       document.getElementById("player").appendChild(player);
       player.load("tangerine-tycoon.swf");
+
+      // Toggle ugly blue sidebars
+      let gray = false;
+      const toggleBtn = document.getElementById('grayModeToggle');
+
+      toggleBtn.onclick = () => {
+        const iframe = document.querySelector("ruffle-embed, ruffle-player, iframe");
+        if (!iframe) return;
+
+        const gameDoc = iframe.shadowRoot || iframe.contentDocument;
+        if (!gameDoc) return;
+
+        const tryToggle = () => {
+          const blueEls = gameDoc.querySelectorAll("*");
+          blueEls.forEach(el => {
+            const bg = getComputedStyle(el).backgroundColor;
+            if (bg && (bg.includes("rgb(0, 76, 153)") || bg.includes("rgb(51, 102, 153)") || bg.includes("blue"))) {
+              el.style.backgroundColor = gray ? "#336699" : "#444";
+            }
+          });
+        };
+
+        gray = !gray;
+        toggleBtn.textContent = gray ? "Show Blue Again" : "Hide Ugly Mode";
+        tryToggle();
+      };
     });
   </script>
 </body>
