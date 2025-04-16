@@ -10,18 +10,22 @@
   <meta name="author" content="StaticQuasar931" />
   <meta name="robots" content="index, follow" />
   <link rel="icon" href="tangerine-tycoon.png" type="image/png" />
+
+  <!-- Ruffle for Flash Emulation -->
   <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
   <style>
+    /* Reset body/html to avoid scrollbars and black background mismatch */
     html, body {
       margin: 0;
       padding: 0;
-      background: #000;
       width: 100%;
       height: 100%;
-      overflow: hidden;
+      background: #000; /* ensures full black behind everything */
+      overflow: hidden; /* no scrollbars */
     }
 
+    /* Small floating menu in top-left */
     #staticMenu {
       position: fixed;
       top: 10px;
@@ -35,13 +39,13 @@
       z-index: 9999;
       animation: glow 2s infinite alternate;
     }
-
     #staticMenu a {
       color: #0ff;
       text-decoration: none;
       font-weight: bold;
     }
 
+    /* Crop Toggle Button in top-right */
     #toggleCrop {
       position: fixed;
       top: 10px;
@@ -57,46 +61,62 @@
       box-shadow: 0 0 10px #666;
     }
 
+    /* Glow animation for the menu */
     @keyframes glow {
-      0% { opacity: 0.7; }
+      0%   { opacity: 0.7; }
       100% { opacity: 1; box-shadow: 0 0 10px #0ff; }
     }
 
+    /*
+      The main container that fills the entire screen.
+      This is where overflow is hidden, so the scaled portion is cropped away.
+    */
     #cropContainer {
+      position: fixed;    /* occupy the entire window */
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      overflow: hidden;   /* hides whatever is scaled out of view */
       background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
+    /*
+      The wrapper we actually scale up or down.
+      transform-origin: center center ensures it zooms from the center.
+    */
     #playerWrapper {
-      transform-origin: center center;
-      transition: transform 0.3s ease;
+      position: relative;
       width: 100%;
       height: 100%;
+      transform-origin: center center;
+      transition: transform 0.3s ease; /* smooth animation */
     }
 
+    /* The actual Ruffle/Flash embed area */
     #player {
       width: 100%;
       height: 100%;
-      background: #000;
+      background: #000; /* ensure black background behind the SWF */
     }
   </style>
 </head>
 <body>
 
-  <!-- StaticQuasar931 Menu -->
+  <!-- StaticQuasar931's floating menu -->
   <div id="staticMenu">
-    <a href="https://sites.google.com/view/staticquasar931/gm3z" target="_blank">More Unblocked Games by Static</a>
+    <a href="https://sites.google.com/view/staticquasar931/gm3z" target="_blank">
+      More Unblocked Games by Static
+    </a>
   </div>
 
   <!-- Crop Mode Button -->
   <button id="toggleCrop">Hide Ugly Mode</button>
 
-  <!-- Game Embed Container -->
+  <!-- Fullscreen Container for the Game -->
   <div id="cropContainer">
     <div id="playerWrapper">
       <div id="player"></div>
@@ -104,17 +124,22 @@
   </div>
 
   <script>
+    // Initialize Ruffle
     window.RufflePlayer = window.RufflePlayer || {};
     window.addEventListener("DOMContentLoaded", () => {
       const ruffle = window.RufflePlayer.newest();
       const player = ruffle.createPlayer();
+
+      // Fill the #player div
       player.style.width = "100%";
       player.style.height = "100%";
       player.style.backgroundColor = "#000";
+
+      // Attach to DOM and load .swf
       document.getElementById("player").appendChild(player);
       player.load("tangerine-tycoon.swf");
 
-      // Crop Mode Logic
+      // "Crop" toggle logic
       let cropped = false;
       const wrapper = document.getElementById("playerWrapper");
       const toggleBtn = document.getElementById("toggleCrop");
@@ -122,7 +147,13 @@
       toggleBtn.onclick = () => {
         cropped = !cropped;
         if (cropped) {
-          wrapper.style.transform = "scale(1.35)"; // 👈 EDIT SCALE HERE
+          /*
+            1.35 is the recommended scale factor for
+            hiding the default gray edges (i.e., “ugly mode”).
+            Adjust as you please: 1.25, 1.5, etc.
+          */
+          wrapper.style.transform = "scale(1.35)";
+
           toggleBtn.textContent = "Show Full View";
         } else {
           wrapper.style.transform = "scale(1)";
