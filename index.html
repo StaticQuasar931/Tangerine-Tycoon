@@ -16,40 +16,10 @@
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #000;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    #game-wrapper {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
       background: #000;
-    }
-
-    #player {
       width: 100%;
       height: 100%;
-      background-color: #000;
-    }
-
-    .grayOverlay {
-      position: fixed;
-      top: 0;
-      height: 100vh;
-      width: 18vw; /* 👈 Percent-based cropping — edit this value if needed */
-      background-color: #222;
-      z-index: 900;
-      display: none;
-    }
-
-    #leftOverlay {
-      left: 0;
-    }
-
-    #rightOverlay {
-      right: 0;
+      overflow: hidden;
     }
 
     #staticMenu {
@@ -62,7 +32,7 @@
       border-radius: 10px;
       font-size: 14px;
       font-family: Arial, sans-serif;
-      z-index: 1000;
+      z-index: 9999;
       animation: glow 2s infinite alternate;
     }
 
@@ -83,7 +53,7 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      z-index: 1000;
+      z-index: 9999;
       box-shadow: 0 0 10px #666;
     }
 
@@ -91,28 +61,48 @@
       0% { opacity: 0.7; }
       100% { opacity: 1; box-shadow: 0 0 10px #0ff; }
     }
+
+    #cropContainer {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+    }
+
+    #playerWrapper {
+      transform-origin: center center;
+      transition: transform 0.3s ease;
+      width: 100%;
+      height: 100%;
+    }
+
+    #player {
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
   </style>
 </head>
 <body>
 
-  <!-- StaticQuasar931 Navigation -->
+  <!-- StaticQuasar931 Menu -->
   <div id="staticMenu">
     <a href="https://sites.google.com/view/staticquasar931/gm3z" target="_blank">More Unblocked Games by Static</a>
   </div>
 
-  <!-- Hide Ugly Mode Button -->
+  <!-- Crop Mode Button -->
   <button id="toggleCrop">Hide Ugly Mode</button>
 
-  <!-- Left and Right Gray Overlays -->
-  <div id="leftOverlay" class="grayOverlay"></div>
-  <div id="rightOverlay" class="grayOverlay"></div>
-
-  <!-- Game Embed -->
-  <div id="game-wrapper">
-    <div id="player"></div>
+  <!-- Game Embed Container -->
+  <div id="cropContainer">
+    <div id="playerWrapper">
+      <div id="player"></div>
+    </div>
   </div>
 
-  <!-- Ruffle Loader & Toggle Script -->
   <script>
     window.RufflePlayer = window.RufflePlayer || {};
     window.addEventListener("DOMContentLoaded", () => {
@@ -124,18 +114,20 @@
       document.getElementById("player").appendChild(player);
       player.load("tangerine-tycoon.swf");
 
-      // Crop toggle logic
+      // Crop Mode Logic
       let cropped = false;
-      const leftOverlay = document.getElementById("leftOverlay");
-      const rightOverlay = document.getElementById("rightOverlay");
+      const wrapper = document.getElementById("playerWrapper");
       const toggleBtn = document.getElementById("toggleCrop");
 
       toggleBtn.onclick = () => {
         cropped = !cropped;
-        const display = cropped ? "block" : "none";
-        leftOverlay.style.display = display;
-        rightOverlay.style.display = display;
-        toggleBtn.textContent = cropped ? "Show Full View" : "Hide Ugly Mode";
+        if (cropped) {
+          wrapper.style.transform = "scale(1.35)"; // 👈 EDIT SCALE HERE
+          toggleBtn.textContent = "Show Full View";
+        } else {
+          wrapper.style.transform = "scale(1)";
+          toggleBtn.textContent = "Hide Ugly Mode";
+        }
       };
     });
   </script>
