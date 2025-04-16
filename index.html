@@ -11,45 +11,44 @@
   <meta name="robots" content="index, follow" />
   <link rel="icon" href="tangerine-tycoon.png" type="image/png" />
 
-  <!-- Ruffle for Flash Emulation -->
+  <!-- Load Ruffle for Flash emulation -->
   <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
   <style>
-    /* 1) Reset and Body Defaults */
+    /* 1) Basic Reset and Body Defaults */
     html, body {
       margin: 0;
       padding: 0;
-      /* No overflow hidden here so if the iframe is smaller than content, 
-         scroll bars can appear instead of cropping. */
       background-color: #000;
-      height: 100%; /* Let the iframe/container control actual size */
+      /* Let the iframe or browser decide if scroll bars are needed. */
       width: 100%;
+      height: 100%;
     }
 
-    /* 2) Main Game Wrapper fills the container (iframe) 100% */
+    /* 2) Container that fills entire iframe or browser window */
     #game-wrapper {
       position: relative;
       width: 100%;
-      height: 100%; /* In most cases, your iframe height sets the actual space. */
+      height: 100%;
       background: #000;
     }
 
-    /* 3) Ruffle Player fills the wrapper */
+    /* 3) Ruffle Player – full width/height of game-wrapper */
     #player {
       width: 100%;
       height: 100%;
       background-color: #000;
     }
 
-    /* 4) Side Overlays for cropping (absolute to #game-wrapper) */
+    /* 4) Side Overlays for cropping – absolute inside #game-wrapper */
     .grayOverlay {
-      position: absolute;       /* absolute = pinned inside #game-wrapper */
+      position: absolute;
       top: 0;
-      bottom: 0;               /* fill top-to-bottom of wrapper */
-      width: 18%;              /* proportion of the wrapper's width */
+      bottom: 0;           /* fill top-to-bottom of #game-wrapper */
+      width: 18%;          /* crop is 18% of the #game-wrapper width */
       background-color: #222;
+      display: none;       /* hidden by default (toggled by button) */
       z-index: 900;
-      display: none;           /* hidden by default */
     }
     #leftOverlay {
       left: 0;
@@ -58,10 +57,9 @@
       right: 0;
     }
 
-    /* 5) StaticQuasar931 Nav Menu (fixed to the viewport – 
-          if you want it inside #game-wrapper, change to absolute) */
+    /* 5) StaticQuasar931 Nav Menu */
     #staticMenu {
-      position: fixed;
+      position: fixed;     /* pinned to viewport – stays visible in full screen */
       top: 10px;
       left: 10px;
       background: #111;
@@ -70,7 +68,7 @@
       border-radius: 10px;
       font-size: 14px;
       font-family: Arial, sans-serif;
-      z-index: 1000; /* above overlays */
+      z-index: 1000;       /* above overlays */
       animation: glow 2s infinite alternate;
     }
     #staticMenu a {
@@ -81,7 +79,7 @@
 
     /* 6) Button to Toggle Overlays */
     #toggleCrop {
-      position: fixed;
+      position: fixed;     /* pinned to viewport – top right corner */
       top: 10px;
       right: 10px;
       background: #333;
@@ -91,13 +89,15 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      z-index: 1000; /* above overlays */
+      z-index: 1000;       /* above overlays */
       box-shadow: 0 0 10px #666;
     }
 
-    /* 7) Glow Animation for the Nav Menu */
+    /* 7) Glow Animation for Nav Menu */
     @keyframes glow {
-      0% { opacity: 0.7; }
+      0% {
+        opacity: 0.7;
+      }
       100% {
         opacity: 1;
         box-shadow: 0 0 10px #0ff;
@@ -114,30 +114,31 @@
     </a>
   </div>
 
-  <!-- Button to Toggle Left/Right Overlays -->
+  <!-- Button to Toggle Left/Right Cropping -->
   <button id="toggleCrop">Hide Ugly Mode</button>
 
-  <!-- Game Embed + Overlays -->
+  <!-- Main Game Container -->
   <div id="game-wrapper">
-    <!-- Side Overlays -->
+    <!-- Left & Right Gray Overlays (cropped sides) -->
     <div id="leftOverlay" class="grayOverlay"></div>
     <div id="rightOverlay" class="grayOverlay"></div>
 
-    <!-- Ruffle Player Container -->
+    <!-- Ruffle Player -->
     <div id="player"></div>
   </div>
 
-  <!-- Ruffle Loader & Toggle Script -->
   <script>
     window.RufflePlayer = window.RufflePlayer || {};
     window.addEventListener("DOMContentLoaded", () => {
-      // 1) Initialize Ruffle and load the SWF
+      // 1) Initialize Ruffle
       const ruffle = window.RufflePlayer.newest();
       const player = ruffle.createPlayer();
       document.getElementById("player").appendChild(player);
+
+      // 2) Load your SWF
       player.load("tangerine-tycoon.swf");
 
-      // 2) Crop Toggle Logic
+      // 3) Button toggles overlays
       let cropped = false;
       const leftOverlay = document.getElementById("leftOverlay");
       const rightOverlay = document.getElementById("rightOverlay");
