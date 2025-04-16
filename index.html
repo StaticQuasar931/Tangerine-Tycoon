@@ -38,6 +38,7 @@
       position: fixed;
       top: 0;
       height: 100vh;
+      width: clamp(200px, 15vw, 347px);
       background-color: #222;
       z-index: 900;
       display: none;
@@ -111,39 +112,30 @@
     <div id="player"></div>
   </div>
 
+  <!-- Ruffle Loader & Crop Toggle Script -->
   <script>
     window.RufflePlayer = window.RufflePlayer || {};
     window.addEventListener("DOMContentLoaded", () => {
       const ruffle = window.RufflePlayer.newest();
       const player = ruffle.createPlayer();
-      const playerContainer = document.getElementById("player");
       player.style.width = "100%";
       player.style.height = "100%";
       player.style.backgroundColor = "#000";
-      playerContainer.appendChild(player);
+      document.getElementById("player").appendChild(player);
       player.load("tangerine-tycoon.swf");
 
-      // Crop logic
+      // Crop toggle logic
       let cropped = false;
-      const grayWidth = 347; // <--- EDIT this number to change how much gets covered
       const leftOverlay = document.getElementById("leftOverlay");
       const rightOverlay = document.getElementById("rightOverlay");
       const toggleBtn = document.getElementById("toggleCrop");
 
-      // Set overlay widths
-      leftOverlay.style.width = rightOverlay.style.width = grayWidth + "px";
-
       toggleBtn.onclick = () => {
         cropped = !cropped;
-        if (cropped) {
-          leftOverlay.style.display = "block";
-          rightOverlay.style.display = "block";
-          toggleBtn.textContent = "Show Full View";
-        } else {
-          leftOverlay.style.display = "none";
-          rightOverlay.style.display = "none";
-          toggleBtn.textContent = "Hide Ugly Mode";
-        }
+        const state = cropped ? "block" : "none";
+        leftOverlay.style.display = state;
+        rightOverlay.style.display = state;
+        toggleBtn.textContent = cropped ? "Show Full View" : "Hide Ugly Mode";
       };
     });
   </script>
