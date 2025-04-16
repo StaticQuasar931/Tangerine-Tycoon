@@ -38,7 +38,7 @@
       position: fixed;
       top: 0;
       height: 100vh;
-      width: clamp(347px, 15vw, 247px);
+      width: 17vw; /* 👈 EDIT this % to crop more or less */
       background-color: #222;
       z-index: 900;
       display: none;
@@ -112,7 +112,7 @@
     <div id="player"></div>
   </div>
 
-  <!-- Ruffle Loader & Crop Toggle Script -->
+  <!-- Ruffle Loader & Toggle Script -->
   <script>
     window.RufflePlayer = window.RufflePlayer || {};
     window.addEventListener("DOMContentLoaded", () => {
@@ -132,9 +132,9 @@
 
       toggleBtn.onclick = () => {
         cropped = !cropped;
-        const state = cropped ? "block" : "none";
-        leftOverlay.style.display = state;
-        rightOverlay.style.display = state;
+        const display = cropped ? "block" : "none";
+        leftOverlay.style.display = display;
+        rightOverlay.style.display = display;
         toggleBtn.textContent = cropped ? "Show Full View" : "Hide Ugly Mode";
       };
     });
