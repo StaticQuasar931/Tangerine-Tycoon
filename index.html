@@ -13,53 +13,46 @@
   <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
   <style>
-    /* Remove default margin/padding to let the wrapper fill the iframe cleanly */
     html, body {
       margin: 0;
       padding: 0;
       background-color: #000;
-      /* If the iframe or parent has a defined height, we'll fill it. */
-      width: 100%;
       height: 100%;
       overflow: hidden;
     }
 
-    /* The main wrapper that fills its parent container (iframe). */
     #game-wrapper {
       position: relative;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       background: #000;
     }
 
-    /* The SWF/Ruffle container also fills the wrapper. */
     #player {
       width: 100%;
       height: 100%;
       background-color: #000;
     }
 
-    /* Overlays are absolutely positioned on top, hidden by default. */
     .grayOverlay {
-      position: absolute;
+      position: fixed;
       top: 0;
-      bottom: 0; /* fill vertical space */
-      width: 347px; /* fixed crop area */
+      height: 100vh;
       background-color: #222;
       z-index: 900;
-      display: none; /* toggled via JS */
+      display: none;
     }
 
     #leftOverlay {
       left: 0;
     }
+
     #rightOverlay {
       right: 0;
     }
 
-    /* The floating menu box in the top-left */
     #staticMenu {
-      position: fixed; /* or absolute, but fixed keeps it in place if page scrolls */
+      position: fixed;
       top: 10px;
       left: 10px;
       background: #111;
@@ -71,15 +64,15 @@
       z-index: 1000;
       animation: glow 2s infinite alternate;
     }
+
     #staticMenu a {
       color: #0ff;
       text-decoration: none;
       font-weight: bold;
     }
 
-    /* The toggle button in the top-right */
     #toggleCrop {
-      position: fixed; /* or absolute if you prefer within iframe */
+      position: fixed;
       top: 10px;
       right: 10px;
       background: #333;
@@ -93,13 +86,9 @@
       box-shadow: 0 0 10px #666;
     }
 
-    /* Menu glow animation */
     @keyframes glow {
       0% { opacity: 0.7; }
-      100% {
-        opacity: 1;
-        box-shadow: 0 0 10px #0ff;
-      }
+      100% { opacity: 1; box-shadow: 0 0 10px #0ff; }
     }
   </style>
 </head>
@@ -107,38 +96,44 @@
 
   <!-- StaticQuasar931 Navigation -->
   <div id="staticMenu">
-    <a href="https://sites.google.com/view/staticquasar931/gm3z" target="_blank">
-      More Unblocked Games by Static
-    </a>
+    <a href="https://sites.google.com/view/staticquasar931/gm3z" target="_blank">More Unblocked Games by Static</a>
   </div>
 
-  <!-- "Ugly Mode" Toggle Button -->
+  <!-- Hide Ugly Mode Button -->
   <button id="toggleCrop">Hide Ugly Mode</button>
 
-  <!-- Wrapper for the Ruffle/Flash game -->
-  <div id="game-wrapper">
-    <!-- Left/Right Overlays (initially hidden) -->
-    <div id="leftOverlay" class="grayOverlay"></div>
-    <div id="rightOverlay" class="grayOverlay"></div>
+  <!-- Left and Right Gray Overlays -->
+  <div id="leftOverlay" class="grayOverlay"></div>
+  <div id="rightOverlay" class="grayOverlay"></div>
 
-    <!-- Actual Ruffle Player container -->
+  <!-- Game Embed -->
+  <div id="game-wrapper">
     <div id="player"></div>
   </div>
 
   <script>
     window.RufflePlayer = window.RufflePlayer || {};
     window.addEventListener("DOMContentLoaded", () => {
-      // Initialize Ruffle
       const ruffle = window.RufflePlayer.newest();
       const player = ruffle.createPlayer();
-      document.getElementById("player").appendChild(player);
+      const playerContainer = document.getElementById("player");
+      player.style.width = "100%";
+      player.style.height = "100%";
+      player.style.backgroundColor = "#000";
+      playerContainer.appendChild(player);
       player.load("tangerine-tycoon.swf");
 
-      // Toggle Overlays (Ugly Mode)
+      // Crop logic
       let cropped = false;
+      // Adjust this to whatever percent you want each side to cover.
+      const overlayPercent = 18; 
       const leftOverlay = document.getElementById("leftOverlay");
       const rightOverlay = document.getElementById("rightOverlay");
       const toggleBtn = document.getElementById("toggleCrop");
+
+      // Set overlay widths in percentage
+      leftOverlay.style.width = overlayPercent + "%";
+      rightOverlay.style.width = overlayPercent + "%";
 
       toggleBtn.onclick = () => {
         cropped = !cropped;
