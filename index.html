@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Play Tangerine Tycoon - Unblocked Flash Clicker Game | StaticQuasar931</title>
 
   <meta name="description" content="Play Tangerine Tycoon – a chaotic and addictive clicker game about hoarding citrus. Breed, invest, and time-travel with tangerines! Fully unblocked and Flash-ready at StaticQuasar931." />
@@ -13,6 +13,11 @@
   <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
   <style>
+    :root {
+      /* Set your desired game width here */
+      --GAME_WIDTH: 1200px;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
@@ -21,34 +26,46 @@
       overflow: hidden;
     }
 
+    /* Wrapper covers the full browser window. */
     #game-wrapper {
       position: relative;
       width: 100vw;
       height: 100vh;
       background: #000;
+      overflow: hidden;
     }
 
+    /* Center the SWF container horizontally, fix its width, let the height fill. */
     #player {
-      width: 100%;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: var(--GAME_WIDTH);
       height: 100%;
       background-color: #000;
     }
 
     .grayOverlay {
-      position: fixed;
+      position: absolute;
       top: 0;
-      height: 100vh;
+      bottom: 0;
       background-color: #222;
       z-index: 900;
-      display: none;
+      display: none; /* Hidden by default until toggled */
     }
 
+    /* Left overlay: fill leftover space from the left edge to the left edge of the game area */
     #leftOverlay {
       left: 0;
+      width: calc((100vw - var(--GAME_WIDTH)) / 2);
     }
 
+    /* Right overlay: fill leftover space from the right edge of the game area to the right edge of the screen */
     #rightOverlay {
       right: 0;
+      width: calc((100vw - var(--GAME_WIDTH)) / 2);
     }
 
     #staticMenu {
@@ -87,8 +104,13 @@
     }
 
     @keyframes glow {
-      0% { opacity: 0.7; }
-      100% { opacity: 1; box-shadow: 0 0 10px #0ff; }
+      0% {
+        opacity: 0.7;
+      }
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 10px #0ff;
+      }
     }
   </style>
 </head>
@@ -102,12 +124,13 @@
   <!-- Hide Ugly Mode Button -->
   <button id="toggleCrop">Hide Ugly Mode</button>
 
-  <!-- Left and Right Gray Overlays -->
-  <div id="leftOverlay" class="grayOverlay"></div>
-  <div id="rightOverlay" class="grayOverlay"></div>
-
-  <!-- Game Embed -->
+  <!-- Game Wrapper (full window) -->
   <div id="game-wrapper">
+    <!-- Gray Overlays -->
+    <div id="leftOverlay" class="grayOverlay"></div>
+    <div id="rightOverlay" class="grayOverlay"></div>
+
+    <!-- SWF Player in center -->
     <div id="player"></div>
   </div>
 
@@ -117,23 +140,14 @@
       const ruffle = window.RufflePlayer.newest();
       const player = ruffle.createPlayer();
       const playerContainer = document.getElementById("player");
-      player.style.width = "100%";
-      player.style.height = "100%";
-      player.style.backgroundColor = "#000";
       playerContainer.appendChild(player);
       player.load("tangerine-tycoon.swf");
 
-      // Crop logic
+      // "Ugly Mode" toggle
       let cropped = false;
-      // Adjust this to whatever percent you want each side to cover.
-      const overlayPercent = 18; 
       const leftOverlay = document.getElementById("leftOverlay");
       const rightOverlay = document.getElementById("rightOverlay");
       const toggleBtn = document.getElementById("toggleCrop");
-
-      // Set overlay widths in percentage
-      leftOverlay.style.width = overlayPercent + "%";
-      rightOverlay.style.width = overlayPercent + "%";
 
       toggleBtn.onclick = () => {
         cropped = !cropped;
