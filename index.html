@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Play Tangerine Tycoon - Unblocked Flash Clicker Game | StaticQuasar931</title>
 
   <meta name="description" content="Play Tangerine Tycoon – a chaotic and addictive clicker game about hoarding citrus. Breed, invest, and time-travel with tangerines! Fully unblocked and Flash-ready at StaticQuasar931." />
@@ -10,22 +10,51 @@
   <meta name="author" content="StaticQuasar931" />
   <meta name="robots" content="index, follow" />
   <link rel="icon" href="tangerine-tycoon.png" type="image/png" />
-
-  <!-- Ruffle for Flash Emulation -->
   <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
   <style>
-    /* Reset body/html to avoid scrollbars and black background mismatch */
+    /* Reset and Overall Body Settings */
     html, body {
       margin: 0;
       padding: 0;
-      width: 100%;
+      background-color: #000;
       height: 100%;
-      background: #000; /* ensures full black behind everything */
-      overflow: hidden; /* no scrollbars */
+      overflow: hidden;
     }
 
-    /* Small floating menu in top-left */
+    /* Container for the Game */
+    #game-wrapper {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+    }
+
+    /* Ruffle SWF Player */
+    #player {
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+    }
+
+    /* Overlays for cropping sides */
+    .grayOverlay {
+      position: fixed;
+      top: 0;
+      height: 100vh;
+      width: 18vw; /* 👈 Adjust this single % value to control how much is hidden on both sides */
+      background-color: #222;
+      z-index: 900;
+      display: none; /* Hidden by default until toggled */
+    }
+    #leftOverlay {
+      left: 0;
+    }
+    #rightOverlay {
+      right: 0;
+    }
+
+    /* StaticQuasar931 Nav Menu */
     #staticMenu {
       position: fixed;
       top: 10px;
@@ -36,7 +65,7 @@
       border-radius: 10px;
       font-size: 14px;
       font-family: Arial, sans-serif;
-      z-index: 9999;
+      z-index: 1000;
       animation: glow 2s infinite alternate;
     }
     #staticMenu a {
@@ -45,7 +74,7 @@
       font-weight: bold;
     }
 
-    /* Crop Toggle Button in top-right */
+    /* Toggle Button (Cropping On/Off) */
     #toggleCrop {
       position: fixed;
       top: 10px;
@@ -57,108 +86,65 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      z-index: 9999;
+      z-index: 1000;
       box-shadow: 0 0 10px #666;
     }
 
-    /* Glow animation for the menu */
+    /* Menu Glow Animation */
     @keyframes glow {
-      0%   { opacity: 0.7; }
-      100% { opacity: 1; box-shadow: 0 0 10px #0ff; }
-    }
-
-    /*
-      The main container that fills the entire screen.
-      This is where overflow is hidden, so the scaled portion is cropped away.
-    */
-    #cropContainer {
-      position: fixed;    /* occupy the entire window */
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;   /* hides whatever is scaled out of view */
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /*
-      The wrapper we actually scale up or down.
-      transform-origin: center center ensures it zooms from the center.
-    */
-    #playerWrapper {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform-origin: center center;
-      transition: transform 0.3s ease; /* smooth animation */
-    }
-
-    /* The actual Ruffle/Flash embed area */
-    #player {
-      width: 100%;
-      height: 100%;
-      background: #000; /* ensure black background behind the SWF */
+      0% {
+        opacity: 0.7;
+      }
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 10px #0ff;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- StaticQuasar931's floating menu -->
+  <!-- StaticQuasar931 Navigation -->
   <div id="staticMenu">
     <a href="https://sites.google.com/view/staticquasar931/gm3z" target="_blank">
       More Unblocked Games by Static
     </a>
   </div>
 
-  <!-- Crop Mode Button -->
+  <!-- Button to Toggle Cropping -->
   <button id="toggleCrop">Hide Ugly Mode</button>
 
-  <!-- Fullscreen Container for the Game -->
-  <div id="cropContainer">
-    <div id="playerWrapper">
-      <div id="player"></div>
-    </div>
+  <!-- Left and Right Gray Overlays -->
+  <div id="leftOverlay" class="grayOverlay"></div>
+  <div id="rightOverlay" class="grayOverlay"></div>
+
+  <!-- Game Embed -->
+  <div id="game-wrapper">
+    <div id="player"></div>
   </div>
 
+  <!-- Ruffle Loader & Toggle Script -->
   <script>
-    // Initialize Ruffle
     window.RufflePlayer = window.RufflePlayer || {};
     window.addEventListener("DOMContentLoaded", () => {
+      // Initialize Ruffle
       const ruffle = window.RufflePlayer.newest();
       const player = ruffle.createPlayer();
-
-      // Fill the #player div
-      player.style.width = "100%";
-      player.style.height = "100%";
-      player.style.backgroundColor = "#000";
-
-      // Attach to DOM and load .swf
       document.getElementById("player").appendChild(player);
       player.load("tangerine-tycoon.swf");
 
-      // "Crop" toggle logic
+      // Crop Toggle Logic
       let cropped = false;
-      const wrapper = document.getElementById("playerWrapper");
+      const leftOverlay = document.getElementById("leftOverlay");
+      const rightOverlay = document.getElementById("rightOverlay");
       const toggleBtn = document.getElementById("toggleCrop");
 
       toggleBtn.onclick = () => {
         cropped = !cropped;
-        if (cropped) {
-          /*
-            1.35 is the recommended scale factor for
-            hiding the default gray edges (i.e., “ugly mode”).
-            Adjust as you please: 1.25, 1.5, etc.
-          */
-          wrapper.style.transform = "scale(1.35)";
-
-          toggleBtn.textContent = "Show Full View";
-        } else {
-          wrapper.style.transform = "scale(1)";
-          toggleBtn.textContent = "Hide Ugly Mode";
-        }
+        const display = cropped ? "block" : "none";
+        leftOverlay.style.display = display;
+        rightOverlay.style.display = display;
+        toggleBtn.textContent = cropped ? "Show Full View" : "Hide Ugly Mode";
       };
     });
   </script>
